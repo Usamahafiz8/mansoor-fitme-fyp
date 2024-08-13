@@ -5,12 +5,12 @@ export async function PUT(req) {
   await dbConnect();
 
   try {
-    const { userId, brandInfo } = await req.json();
+    const { userId, brandInfo, brandApplied } = await req.json();
     console.log("bat", brandInfo);
     // Find the user by ID and update their brand information
     const updatedUser = await User.findByIdAndUpdate(
       userId,
-      { brandInfo: brandInfo },
+      { brandInfo: brandInfo, brandApplied },
       { new: true } // Return the updated document
     );
 

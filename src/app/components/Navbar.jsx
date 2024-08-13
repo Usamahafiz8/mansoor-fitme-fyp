@@ -32,7 +32,7 @@ export default function Navbar() {
       className={clsx(
         "w-full flex flex-wrap justify-between items-center",
         "sticky top-0 z-40 py-3 px-4",
-        "bg-gray-200/90 border-b border-gray-300",
+        "bg-[#262D3E] border-b border-[#262D3E]",
         "backdrop-filter backdrop-blur-lg shadow-sm",
         "md:(py-1)"
       )}
@@ -48,10 +48,23 @@ export default function Navbar() {
           <Link href="/try-on">
             <h3 className="text-medium text-xl">Try On</h3>
           </Link>
+          <Link href="/support">
+            <h3 className="text-medium text-xl">Support</h3>
+          </Link>
+          <Link href="/about-us">
+            <h3 className="text-medium text-xl">About Us</h3>
+          </Link>
         </div>
       </div>
 
       <div className="flex items-center ml-2 space-x-4 md:order-2">
+          {user && (
+  
+            <Link href="/account">
+              <h3 className="text-medium text-xl">Become a Seller</h3>
+            </Link>
+            )
+          }
         <Link href="/cart" className="relative flex items-center pr-2">
           <ShoppingCart width={24} height={24} />
           {cartState?.products?.length ? (
@@ -65,69 +78,14 @@ export default function Navbar() {
             user={user}
             onLogout={() => {
               api.logoutUser();
-              handleLogout()
+              handleLogout();
             }}
           />
         )}
-        <button className="md:hidden flex items-center focus:outline-none">
-          {showMenu ? (
-            <X width={24} height={24} onClick={() => setShowMenu(false)} />
-          ) : (
-            <Menu width={24} height={24} onClick={() => setShowMenu(true)} />
-          )}
-        </button>
+       
       </div>
 
-      <div
-        className={clsx(
-          "hidden w-full",
-          showMenu && "!flex flex-col mt-8",
-          "md:(flex flex-row mt-0 ml-auto order-1 w-auto)"
-        )}>
-        <ul
-          className={clsx(
-            "flex flex-col items-center order-2",
-            "mt-8 mb-2 text-xl space-y-1 divide-y-2 divide-gray-200",
-            "md:(flex-row text-base m-0 space-y-0 divide-y-0 divide-x)"
-          )}
-          onClick={() => setShowMenu(false)}>
-          <NavLink href="/products?category=men">Men</NavLink>
-          <NavLink href="/products?category=women">Women</NavLink>
-          <NavLink href="/products">All Products</NavLink>
-        </ul>
-        <div className="flex items-center order-1 md:order-2">
-          <Input
-            className="md:max-w-min bg-opacity-40"
-            icon={<Search />}
-            placeholder="Search..."
-          />
-        </div>
-        {!user && (
-          <ul
-            className={clsx(
-              "flex flex-col order-3",
-              showMenu && "mt-4",
-              "md:(flex-row text-base mt-0 space-x-2)"
-            )}>
-            <li>
-              <Link href="/login">
-                <Button secondary className="w-full md:w-auto">
-                  <LogIn width={20} height={20} className="mr-2" />
-                  Login
-                </Button>
-              </Link>
-            </li>
-            <li>
-              <Link href="/register">
-                <Button className="w-full md:w-auto">
-                  <User width={20} height={20} className="mr-2" />
-                  Register
-                </Button>
-              </Link>
-            </li>
-          </ul>
-        )}
-      </div>
+    
     </nav>
   );
 }

@@ -7,7 +7,7 @@ const BrandPortal = () => {
 
   useEffect(() => {
     const fetchProducts = async () => {
-      const res = await axios.get("/api/products?brand=true");
+      const res = await axios.get("/api/products");
       setProducts(res.data.data);
     };
 

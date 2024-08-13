@@ -20,7 +20,7 @@ export async function GET(req) {
     const decoded = jwt.verify(token, process.env.NEXT_PUBLIC_SECRET);
 
     // Find the user in the database
-    const user = await User.find({verified:false});
+    const user = await User.find({brandApplied:true, brandVerified:false});
     console.log("user",user)
     if (!user) {
       return new Response(JSON.stringify({ message: "User not found" }), {

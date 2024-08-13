@@ -38,7 +38,9 @@ export async function GET(req) {
           email: user.email,
           role: user.role,
           verified: user.verified,
-          brandInfo: user.brandInfo
+          brandInfo: user.brandInfo,
+          brandVerified: user.brandVerified,
+          brandApplied: user.brandApplied,
         },
       }),
       {

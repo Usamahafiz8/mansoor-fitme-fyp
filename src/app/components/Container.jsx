@@ -4,7 +4,7 @@ import PageHeader from "./PageHeader"
 
 export default function Container({ heading, children, type="section" }) {
 	return (
-		<section className="my-14 container mx-auto">
+		<section className="container mx-auto bg-white py-10">
 			<PageHeader h2={type !== "page"}>
 				{heading}
 			</PageHeader>

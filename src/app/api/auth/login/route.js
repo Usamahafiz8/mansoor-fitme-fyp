@@ -70,7 +70,9 @@ export async function POST(req) {
           id: existingUser._id,
           fullname: existingUser.fullname,
           email: existingUser.email,
-          role: existingUser.role
+          role: existingUser.role,
+          brandVerified: existingUser.brandVerified,
+          brandApplied: existingUser.brandApplied
         },
       }),
       {

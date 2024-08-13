@@ -1,14 +1,8 @@
 import React from 'react'
 import { Plus, Minus, Trash, X } from "react-feather"
 import api from "@/utils/fetchData"
-export default function CartItem({id,imgSrc, name, price, quantity, setQuantity ,color,size}) {
-	const removeItemFromCart = async () => {
-		try {
-		await api.patchCart(id,quantity);
-		} catch (error) {
-		console.error("Error canceling verification:", error);
-		}
- 	 };
+export default function CartItem({id,imgSrc, name, price, quantity, setQuantity ,color,size,removeItem,product}) {
+	
 	return (
     <div className="flex flex-wrap items-center m-2 p-2">
       <section className="max-w-28 md:max-w-40 overflow-hidden mr-2">
@@ -40,7 +34,7 @@ export default function CartItem({id,imgSrc, name, price, quantity, setQuantity 
             <div className="flex items-center space-x-2 border border-gray-300 rounded-lg p-1">
               <Trash
                 className="cursor-pointer"
-                onClick={() => removeItemFromCart()}
+                onClick={() => removeItem(product)}
               />
 
               <span className="text-xl px-1">{quantity}</span>

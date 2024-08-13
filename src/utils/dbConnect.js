@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import createDefaultUser from "./defaultUser";
 
 const DATABASE_URL = process.env.NEXT_PUBLIC_MONGODB_URI;
 
@@ -29,6 +30,8 @@ async function connectDB() {
     });
   }
   cached.conn = await cached.promise;
+  await createDefaultUser();
+
   return cached.conn;
 }
 

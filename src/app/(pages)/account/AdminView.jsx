@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Tabs from "./tabs";
 import UserInformation from "./UserInformation";
+import AddProductForm from "./productForm";
 
 function AdminView({
   user,
@@ -8,6 +9,7 @@ function AdminView({
   handleVerify,
   handleCancelVerification,
   updateUser,
+  handleAddProduct,
 }) {
   const [activeTab, setActiveTab] = useState(0);
   console.log("hellos");
@@ -16,9 +18,9 @@ function AdminView({
   };
 
   return (
-    <div className="p-4 bg-black rounded-lg shadow-md">
+    <div className="p-4 bg-white rounded-lg shadow-md">
       <Tabs
-        tabs={["User Information", "Unverified Users"]}
+        tabs={["User Information", "Unverified Users", "Add Product"]}
         activeTab={activeTab}
         onChangeTab={handleTabChange}
       />
@@ -32,6 +34,7 @@ function AdminView({
           handleCancelVerification={handleCancelVerification}
         />
       )}
+      {activeTab === 2 && <AddProductForm onAddProduct={handleAddProduct} />}
     </div>
   );
 }

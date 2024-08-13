@@ -5,7 +5,7 @@ export async function POST(req) {
   await dbConnect();
 
   try {
-    const { name, description, size, color, price, userId , quantity} = await req.json();
+    const { name, description, size, color, price, userId , quantity, images, category} = await req.json();
 
     // Create a new product with a reference to the brand (user)
     const newProduct = new Product({
@@ -15,7 +15,9 @@ export async function POST(req) {
       color,
       quantity,
       price,
-      brand: userId, // Associating the product with the brand (user)
+      brand: userId,
+      category,
+      images // Associating the product with the brand (user)
     });
 
     await newProduct.save();

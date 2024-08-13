@@ -27,11 +27,30 @@ const ProductSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
+    category:{
+      type: String
+    },
     brand: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User", // Reference to the User model
       required: true,
     },
+    images: [String],
+    reviews:[{
+      rating:{
+        type: Number,
+        default: 0
+      },
+      name:{
+        type: String,
+      },
+      review:{
+        type: String
+      },
+      date:{
+        type: String
+      }
+    }]
   },
   { timestamps: true }
 );

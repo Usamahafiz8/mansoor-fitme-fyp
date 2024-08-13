@@ -19,6 +19,14 @@ const UserSchema = new mongoose.Schema({
   },
   verified: {
     type: Boolean,
+    default: true,
+  },
+  brandVerified: {
+    type: Boolean,
+    default: false,
+  },
+  brandApplied: {
+    type: Boolean,
     default: false,
   },
   role: {

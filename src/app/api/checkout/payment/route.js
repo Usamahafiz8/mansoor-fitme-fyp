@@ -25,44 +25,17 @@ async function verifyAuthorization(req) {
   }
 }
 
-export async function GET(req) {
+export async function POST(req) {
   await dbConnect(); // Ensure database connection
-
-  // Authorization check
-  const decoded = await verifyAuthorization(req);
-  if (!decoded) {
-    return new Response(JSON.stringify({ message: "Unauthorized" }), {
-      status: 401,
-    });
-  }
 
   try {
     // Find the user's cart
-    const cart = await Cart.findOne({ userID: decoded.userId });
-
-    if (!cart || cart.products.length <= 0) {
-      return new Response(
-        JSON.stringify({
-          status: "error",
-          message: "Cannot checkout an empty cart",
-        }),
-        {
-          status: 400,
-        }
-      );
-    }
-
-    // Populate the cart with product details
-    const cartPopulated = await cart
-      .populate({
-        path: "products.productID",
-        select: ["name", "price", 'color', 'size'],
-      })
-
+    
+    const {products} = await req.json()
     // Calculate the total cart value
     let cartTotal = 0;
-    for (let product of cartPopulated.products) {
-      cartTotal += product.quantity * product.productID.price;
+    for (let product of products) {
+      cartTotal += product.quantity * product.price;
     }
 
     // Create a PaymentIntent with Stripe
@@ -76,7 +49,7 @@ export async function GET(req) {
       JSON.stringify({
         clientSecret: paymentIntent.client_secret,
         finalOrder: {
-          ...cartPopulated._doc,
+          products:products,
           amount: cartTotal,
         },
       }),

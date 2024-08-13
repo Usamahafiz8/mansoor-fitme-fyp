@@ -1,6 +1,6 @@
 "use client";
 import React, { Suspense, useContext, useEffect, useState } from "react";
-import { ChevronDown } from "react-feather";
+import { ChevronDown, Frown } from "react-feather";
 
 import ProductList from "@/app/ui/ProductList";
 import Container from "@/app/components/Container";
@@ -11,12 +11,20 @@ import api from "../../../utils/fetchData";
 import { useUser } from "@/app/context/UserContext";
 import { useCart } from "@/app/context/CartContext";
 import { useSearchParams } from "next/navigation";
+import axios from "axios";
+import ProductsGrid from "@/app/components/ProductsGrid";
 
 const sortOptions = [
-  "popular",
-  "new",
-  "price: low to high",
-  "price: high to low",
+  "Shirts",
+  "Trousers",
+  "Shoes",
+];
+
+const sort1Options = [
+  "All",
+  "Under $50",
+  "$50-$200",
+  "above $200"
 ];
 
 function ProductsPageComponent() {
@@ -30,15 +38,23 @@ function ProductsPageComponent() {
   const dropDownRef = useClickOutside(() => setShowSortOptions(false));
   console.log("cartstate",cartState)
   useEffect(() => {
-    (async () => {
+    fetchProducts()
+    
+    
+  }, [category]);
+
+  const fetchProducts = async()=>{
+   
       const resp = await api.fetchProducts(category);
-      console.log("res", resp);
       if (resp?.length > 0) {
         setProducts(resp);
       }
-    })();
-  }, [category]);
+    
+  }
 
+  useEffect(() => {
+     localStorage.setItem("cart", JSON.stringify(cartState));
+  }, [products]);
   useEffect(() => sortProducts(sort), [sort]);
 
   const sortProducts = (sortType) => {
@@ -57,54 +73,68 @@ function ProductsPageComponent() {
   };
 
   const addToCart = async (product, quantity = 1) => {
-    if (user) {
-      const resp = await api.addProductsToCart([
-        { productID: product._id, quantity },
-      ]);
-      if (resp.status === "ok") {
+      const existingProductIndex = cartState.products.findIndex(
+        (item) => item._id === product._id
+      );
+
+      if (existingProductIndex !== -1) {
+        // If product exists in the cart, update its quantity
+        const updatedProducts = cartState.products.map((item, index) => {
+          if (index === existingProductIndex) {
+            return {
+              ...item,
+              quantity: item.quantity + quantity,
+            };
+          }
+          return item;
+        });
+
         cartDispatch({
           type: "ADD_PRODUCTS",
-          payload: [{ productID: product._id, quantity }],
+          payload: { ...cartState, products: updatedProducts },
+        });
+        
+      } else {
+        // If product does not exist in the cart, add it to the existing cart array
+        const updatedProducts = [
+          ...cartState.products,
+          { ...product ,quantity:1},
+        ];
+
+        cartDispatch({
+          type: "ADD_PRODUCTS",
+          payload: { ...cartState, products: updatedProducts },
         });
       }
-    } else {
-      cartDispatch({
-        type: "ADD_PRODUCTS",
-        payload: [{ productID: product._id, quantity }],
+    // Reduce the product quantity in the local state
+    axios
+      .put(`/api/products/${product._id}`, {
+        quantity: product.quantity-1
+      })
+      .then((response) => {
+        fetchProducts();
+      })
+      .catch((error) => {
+        console.error("There was an error submitting the review!", error);
       });
-    }
+    product.quantity -= quantity;
+
   };
 
   return (
-    <main>
+    <main className="bg-white min-h-screen">
       <Container
         heading={`Products${category ? " for: " + category : ""}`}
         type="page">
-        <section className="flex justify-end mb-10">
-          <div className="relative" ref={dropDownRef}>
-            <span className="font-bold">Sort by:</span>
-            <Button
-              secondary
-              onClick={() => setShowSortOptions((prev) => !prev)}>
-              {sortOptions[sort]} <ChevronDown className="ml-2" />
-            </Button>
-
-            {showSortOptions && (
-              <DropDown
-                className="mt-10 inset-x-0"
-                onClick={() => setShowSortOptions(false)}>
-                <Select>
-                  {sortOptions.map((option, i) => (
-                    <Option key={option} onClick={() => setSort(i)}>
-                      {option}
-                    </Option>
-                  ))}
-                </Select>
-              </DropDown>
-            )}
+      
+        {products.length > 0 ? (
+          <ProductsGrid products={products} onAddToCart={addToCart} />
+        ) : (
+          <div className="flex gap-20 items-center p-20 mx-auto">
+            <p className="text-xl text-black">Sorry No Products!!</p>
+            <Frown color="black" />
           </div>
-        </section>
-        <ProductList products={products} onAddToCart={addToCart} />
+        )}
       </Container>
     </main>
   );

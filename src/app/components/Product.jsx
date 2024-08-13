@@ -13,9 +13,9 @@ export default function Product({
   isInCart,
   product,
 }) {
-  console.log("product", isInCart);
   return (
     <Card
+      link={link}
       imgSrc={
         imgSrc ||
         "https://oldnavy.gap.com/webcontent/0052/539/840/cn52539840.jpg"
@@ -30,19 +30,14 @@ export default function Product({
       </div>
 
       <div
-        className={"relative bg-[#dddd] text-black text-center flex flex-col justify-center items-center"}
+        className={"relative h-16 py-2 bg-[#dddd] text-black text-center flex flex-col justify-center items-center"}
         >
-        {isInCart ? (
-          <Link href="/cart">
-            <ProductButton className="!bg-green-500 text-white">
-              <Check className="min-w-8" />
-            </ProductButton>
-          </Link>
-        ) : (
-          <ProductButton onClick={onAddToCart}>
+         {product.quantity > 0  ? <ProductButton onClick={onAddToCart}>
             <ShoppingCart className="min-w-8" />
           </ProductButton>
-        )}
+          :
+          <p className="  my-auto items-center">out of stock</p>
+          }
       </div>
 
       <div
@@ -62,7 +57,7 @@ export default function Product({
 function ProductButton({ children, className, ...props }) {
   return (
     <button
-      className={`m-6 bg-white w-12 h-12 flex justify-center items-center rounded-full transition-all duration-300 ease-out hover:(px-14) focus:outline-none ${className}`}
+      className={` bg-white w-12 h-12  flex justify-center items-center rounded-full transition-all duration-300 ease-out hover:(px-14) focus:outline-none ${className}`}
       {...props}>
       {children}
     </button>

@@ -11,20 +11,10 @@ function cartReducer(state, action) {
   switch (action.type) {
     case "ADD_PRODUCTS":
       // Check if the product already exists in the cart
-      const existingProductIndex = state.products.findIndex(
-        (p) => p.productID === action.payload.productID
-      );
-
-      if (existingProductIndex >= 0) {
-        // Update the quantity if the product is already in the cart
-        const updatedProducts = [...state.products];
-        updatedProducts[existingProductIndex].quantity +=
-          action.payload.quantity;
-        return { ...state, products: updatedProducts };
-      } else {
+     console.log("action.oaye",action.payload)
         // Add new product to the cart
-        return { ...state, products: [...state.products, action.payload] };
-      }
+      return action.payload ;
+      
 
     case "REMOVE_PRODUCT":
       return {
@@ -47,27 +37,23 @@ export const CartProvider = ({ children }) => {
   const [state, dispatch] = useReducer(cartReducer, initialCartState);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-
-    if (token) {
-      fetch("/api/cart", {
-        headers: {
-          Authorization: `${token}`,
-          "Content-Type": "application/json",
-        },
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          if (data.success) {
-            dispatch({ type: "SET_CART", payload: data.data?.products });
-          }
-        })
-        .catch((err) => {
-          console.error("Error fetching cart:", err);
-        });
+    const savedCart = localStorage.getItem("cart");
+    console.log("saved",savedCart)
+    if (savedCart) {
+      try {
+        const cartData = JSON.parse(savedCart);
+        console.log("parsed",cartData)
+        if (Array.isArray(cartData.products)) {
+          console.log("hscj",cartData.products)
+          dispatch({ type: "ADD_PRODUCTS", payload: cartData });
+        }
+      } catch (error) {
+        console.error("Error parsing cart from local storage:", error);
+      }
     }
   }, []);
 
+ 
   return (
     <CartContext.Provider value={{ state, dispatch }}>
       {children}

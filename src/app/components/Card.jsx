@@ -1,7 +1,9 @@
 import React from 'react'
 import clsx from "clsx"
+import { useRouter } from 'next/navigation'
 
-export default function Card({ imgSrc, children, className }) {
+export default function Card({ imgSrc, children, className, link }) {
+	const router= useRouter()
 	return (
 		<div className={clsx(
 			"max-w-72 relative overflow-hidden group",
@@ -13,12 +15,13 @@ export default function Card({ imgSrc, children, className }) {
 		>
 		  <img 
 		  	className={clsx(
-		  		"object-cover",
-		  		"transition duration-500 ease-out transform",
-		  		"group-hover:(scale-110)",
+		  		" object-contain",
+		  		"transition duration-500 ease-out transform w-72 h-60 ",
+		  		"group-hover:(scale-110) cursor-pointer",
 		  	)} 
 		  	src={imgSrc} 
 		  	alt="" 
+			onClick={()=>{router.push(link)}}
 		  />
 	  	{children}
 		</div>

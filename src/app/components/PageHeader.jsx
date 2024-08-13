@@ -1,7 +1,7 @@
 import React from 'react'
 
 export default function PageHeader({ children, h2, h3, className }) {
-	const commonClasses = `text-center font-light ${className}`
+	const commonClasses = `text-center text-black font-light ${className}`
 
 	if (h2) {
 		return <h2 className={`text-3xl md:text-4xl ${commonClasses}`}>{children}</h2>

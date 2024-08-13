@@ -148,7 +148,7 @@ async function fetchProducts(category, newArrivals = false) {
   }`;
   console.log("ad", API_URL);
 
-  const resp = await fetch(API_URL + "/products?");
+  const resp = await fetch(API_URL + "/products");
   return await resp.json();
 }
 async function fetchProduct(id) {
@@ -156,12 +156,13 @@ async function fetchProduct(id) {
   return await resp.json();
 }
 
-async function proceedCheckout() {
+async function proceedCheckout(products) {
   const resp = await fetch(API_URL + "/checkout/payment", {
+    method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: getAccessToken(),
     },
+    body: JSON.stringify({products}),
   });
   return await resp.json();
 }
@@ -249,6 +250,7 @@ async function handleSaveBrandInfo(id, brandInfo) {
       body: JSON.stringify({
         userId: id, // Assuming `user._id` is available in the context
         brandInfo,
+        brandApplied:true
       }),
     });
 

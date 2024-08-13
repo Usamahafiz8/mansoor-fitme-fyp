@@ -32,6 +32,8 @@ export async function PUT(req, { params }) {
           fullName: updatedUser.fullName,
           email: updatedUser.email,
           role: updatedUser.role,
+          brandVerified: updatedUser.brandVerified,
+          brandApplied: updatedUser.brandApplied,
         },
       }),
       {
