@@ -4,6 +4,7 @@ import { useParams, usePathname, useRouter, useSearchParams } from "next/navigat
 import axios from "axios";
 import StarRatingInput from "./starRating";
 import { useCart } from "@/app/context/CartContext";
+import TryonPopup from "@/app/components/TryonPopup";
 
 const ProductDetails = () => {
   const { state: cartState, dispatch: cartDispatch } = useCart();
@@ -176,9 +177,8 @@ const ProductDetails = () => {
             disabled={product?.quantity == 0}>
             {product.quantity > 0 ? "Add to Bag" : "Out of Stock"}
           </button>
-          <button className="w-1/3 mt-2 bg-gray-300 text-gray-700 py-2 px-4 rounded-lg hover:bg-gray-400">
-            Try On
-          </button>
+          <TryonPopup image={product?.images[selectedImageIndex]}/>
+          
           <p className=" text-gray-700">
             Brand:{" "}
             <span className="text-[#A855F7]">
