@@ -1,8 +1,9 @@
-'use client'
+'use client';
 import React, { useState } from "react";
 import axios from "axios";
+import { uploadImageToCloudinary } from "@/utils/uploadImage"; // Ensure this utility is correctly implemented
 
-const RAPID_API_KEY = process.env.NEXT_PUBLIC_RAPID_API_KEY;
+const RAPID_API_KEY = "4361ac8516msh649f4c5ee2a5730p16477djsn7d46e673eb59"; // Replace with your actual key
 
 const TryOnComponent = () => {
   const [avatarFile, setAvatarFile] = useState(null);
@@ -31,13 +32,15 @@ const TryOnComponent = () => {
     setError(null);
 
     try {
-      // Use actual publicly accessible image URLs
-      const avatarUrl =
-        "https://raw.githubusercontent.com/john-eighteenth/clothes-tryon-js/main/resources/look.jpg";
-      const clothingUrl =
-        "https://raw.githubusercontent.com/john-eighteenth/clothes-tryon-js/786d5d3c6a4ac0a9eb7f0d6b658c9e162e82ae50/resources/avatar.jpg";
+      // Upload images to Cloudinary
+      const avatarUrl = await uploadImageToCloudinary(avatarFile);
+      const clothingUrl = await uploadImageToCloudinary(clothingFile);
 
-      // Call the virtualTryOn function
+      // Log URLs for debugging
+      console.log("Avatar URL:", avatarUrl);
+      console.log("Clothing URL:", clothingUrl);
+
+      // Call the virtualTryOn function with the uploaded URLs
       const resultImageUrl = await virtualTryOn(avatarUrl, clothingUrl);
       setResultImage(resultImageUrl);
     } catch (error) {
