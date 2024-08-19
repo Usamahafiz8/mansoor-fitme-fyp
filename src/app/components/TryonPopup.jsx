@@ -1,72 +1,25 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState } from "react";
 import axios from "axios";
-import { uploadImageToCloudinary } from "@/utils/uploadImage";
+import { uploadImageToCloudinary } from "@/utils/uploadImage"; // Ensure this utility is correctly implemented
 
-const RAPID_API_KEY = "4361ac8516msh649f4c5ee2a5730p16477djsn7d46e673eb59" 
+const RAPID_API_KEY = "4361ac8516msh649f4c5ee2a5730p16477djsn7d46e673eb59"; // Replace with your actual key
 
-const TryonPopup = ({ image }) => {
+const TryOnComponent = () => {
   const [avatarFile, setAvatarFile] = useState(null);
-  const [clothingFile, setClothingFile] = useState(image);
+  const [clothingFile, setClothingFile] = useState(null);
   const [avatarPreview, setAvatarPreview] = useState(null);
-  const [clothingPreview, setClothingPreview] = useState(image);
+  const [clothingPreview, setClothingPreview] = useState(null);
   const [resultImage, setResultImage] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [isPopupOpen, setIsPopupOpen] = useState(false);
-  const [selectedImage, setSelectedImage] = useState(null);
-  const popupRef = useRef(null);
 
-  const togglePopup = () => {
-    setIsPopupOpen(!isPopupOpen);
-  };
-
-  const handleClickOutside = (event) => {
-    if (popupRef.current && !popupRef.current.contains(event.target)) {
-      setIsPopupOpen(false);
-    }
-  };
-
-  useEffect(() => {
-    if (isPopupOpen) {
-      document.addEventListener("mousedown", handleClickOutside);
-    } else {
-      document.removeEventListener("mousedown", handleClickOutside);
-    }
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [isPopupOpen]);
-  
-  const handleImageChange = async (event) => {
+  const handleFileChange = (setter, previewSetter) => (event) => {
     const file = event.target.files[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onloadend = async () => {
-        // Set the avatar file and preview
-        setAvatarFile(file);
-        setAvatarPreview(URL.createObjectURL(file));
-        
-        // Set the clothing file if needed
-        setClothingFile(image);
-  
-        try {
-          // Upload the image to Cloudinary
-          const imageUrl = await uploadImageToCloudinary(file);
-          console.log("Uploaded image URL:", imageUrl);
-          setSelectedImage(imageUrl);
-        } catch (error) {
-          console.error("Error uploading image:", error);
-          setError("Failed to upload image. Please try again.");
-        }
-      };
-  
-      // Read the file as a data URL
-      reader.readAsDataURL(file);
+      setter(file);
+      previewSetter(URL.createObjectURL(file));
     }
   };
-  
-
-  
 
   const handleTryOn = async () => {
     if (!avatarFile || !clothingFile) {
@@ -74,16 +27,19 @@ const TryonPopup = ({ image }) => {
       return;
     }
 
-    
-
     setLoading(true);
     setError(null);
-    
+
     try {
-      const avatarUrl = selectedImage//"https://raw.githubusercontent.com/john-eighteenth/clothes-tryon-js/main/resources/look.jpg" // avatarPreview;
-      const clothingUrl = clothingFile// clothingPreview;
-      
-      console.log(avatarUrl, clothingUrl, 'working .....');
+      // Upload images to Cloudinary
+      const avatarUrl = await uploadImageToCloudinary(avatarFile);
+      const clothingUrl = await uploadImageToCloudinary(clothingFile);
+
+      // Log URLs for debugging
+      console.log("Avatar URL:", avatarUrl);
+      console.log("Clothing URL:", clothingUrl);
+
+      // Call the virtualTryOn function with the uploaded URLs
       const resultImageUrl = await virtualTryOn(avatarUrl, clothingUrl);
       setResultImage(resultImageUrl);
     } catch (error) {
@@ -91,7 +47,7 @@ const TryonPopup = ({ image }) => {
         "Error during try-on process:",
         error.response?.data || error.message
       );
-      setError(error.message);
+      setError("An error occurred while processing the images.");
     } finally {
       setLoading(false);
     }
@@ -110,7 +66,7 @@ const TryonPopup = ({ image }) => {
         "X-RapidAPI-Key": RAPID_API_KEY,
         "X-RapidAPI-Host": "texel-virtual-try-on.p.rapidapi.com",
       },
-      data: encodedParams.toString(),
+      data: encodedParams.toString(), // Ensure params are stringified
       responseType: "arraybuffer",
     };
 
@@ -128,76 +84,62 @@ const TryonPopup = ({ image }) => {
   };
 
   return (
-    <div>
-      <button
-        className="w-1/3 mt-2 bg-gray-300 text-gray-700 py-2 px-4 rounded-lg hover:bg-gray-400"
-        onClick={togglePopup}
-      >
-        Try On
-      </button>
-      {isPopupOpen && (
-        <div
-          ref={popupRef}
-          className="fixed inset-0 flex items-center justify-center z-50 w-full h-full text-black"
-        >
-          <div className="bg-white p-6 rounded-lg shadow-2xl w-3/5">
-            <div className="flex gap-8 items-center">
-              <div className="p-12">
-                <img src={image} className="h-auto rounded-lg shadow-md w-48" />
-                <h1 className="text-black font-semibold text-lg">Product Sample</h1>
-              </div>
-              {selectedImage ? (
-                <div>
-                  <img
-                    src={selectedImage}
-                    alt="Selected"
-                    className="h-auto rounded-lg shadow-md w-48"
-                  />
-                  <button
-                    className="mt-4 bg-gray-300 text-gray-700 py-2 px-4 rounded-lg hover:bg-gray-400"
-                    onClick={() => setSelectedImage(null)}
-                  >
-                    Change Image
-                  </button>
-                </div>
-              ) : (
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageChange}
-                  className="mt-4"
-                />
-              )}
-            </div>
-            <button
-              className="mt-4 bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600"
-              onClick={handleTryOn}
-              disabled={loading}
-            >
-              {loading ? "Processing..." : "Try On"}
-            </button>
-            {resultImage && (
-              <div className="mt-4">
-                <h2 className="text-lg font-semibold">Result</h2>
-                <img
-                  src={resultImage}
-                  alt="Try-On Result"
-                  className="h-auto rounded-lg shadow-md w-48"
-                />
-              </div>
-            )}
-            {error && <p className="text-red-500 mt-2">{error}</p>}
-            <button
-              className="mt-4 bg-gray-300 text-gray-700 py-2 px-4 rounded-lg hover:bg-gray-400"
-              onClick={togglePopup}
-            >
-              Close Popup
-            </button>
-          </div>
+    <div className="flex items-center p-4 min-h-screen">
+      <div className="flex flex-col p-4">
+        <div className="mb-4">
+          <h2 className="text-xl font-semibold mb-2">Select Clothing Image</h2>
+          <input
+            type="file"
+            onChange={handleFileChange(setClothingFile, setClothingPreview)}
+          />
+          {clothingPreview && (
+            <img
+              src={clothingPreview}
+              alt="Clothing Preview"
+              className="mt-2 max-w-xs w-40"
+            />
+          )}
         </div>
-      )}
+
+        <div className="mb-4">
+          <h2 className="text-xl font-semibold mb-2">Select Your Picture</h2>
+          <input
+            type="file"
+            onChange={handleFileChange(setAvatarFile, setAvatarPreview)}
+          />
+          {avatarPreview && (
+            <img
+              src={avatarPreview}
+              alt="Avatar Preview"
+              className="mt-2 max-w-xs w-40"
+            />
+          )}
+        </div>
+
+        <button
+          onClick={handleTryOn}
+          className="mt-2 p-2 bg-blue-500 text-white rounded"
+          disabled={loading}>
+          {loading ? "Processing..." : "Upload and Try On"}
+        </button>
+
+        {error && <p className="text-red-500 mt-2">{error}</p>}
+      </div>
+
+      <div className="w-full mt-4">
+        {resultImage && (
+          <div className="border p-4">
+            <h2 className="text-xl font-semibold mb-2">Results</h2>
+            <img
+              src={resultImage}
+              alt="Try-On Result"
+              className="w-96 h-auto"
+            />
+          </div>
+        )}
+      </div>
     </div>
   );
 };
 
-export default TryonPopup;
+export default TryOnComponent;
