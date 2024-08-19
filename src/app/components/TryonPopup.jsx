@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
+import { uploadImageToCloudinary } from "@/utils/uploadImage";
 
-const RAPID_API_KEY = "4361ac8516msh649f4c5ee2a5730p16477djsn7d46e673eb59" //process.env.NEXT_PUBLIC_RAPID_API_KEY;
+const RAPID_API_KEY = "4361ac8516msh649f4c5ee2a5730p16477djsn7d46e673eb59" 
 
 const TryonPopup = ({ image }) => {
   const [avatarFile, setAvatarFile] = useState(null);
@@ -35,19 +36,37 @@ const TryonPopup = ({ image }) => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [isPopupOpen]);
-
-  const handleImageChange = (event) => {
+  
+  const handleImageChange = async (event) => {
     const file = event.target.files[0];
     if (file) {
       const reader = new FileReader();
-      reader.onloadend = () => {
-        setSelectedImage(reader.result);
+      reader.onloadend = async () => {
+        // Set the avatar file and preview
         setAvatarFile(file);
         setAvatarPreview(URL.createObjectURL(file));
+        
+        // Set the clothing file if needed
+        setClothingFile(image);
+  
+        try {
+          // Upload the image to Cloudinary
+          const imageUrl = await uploadImageToCloudinary(file);
+          console.log("Uploaded image URL:", imageUrl);
+          setSelectedImage(imageUrl);
+        } catch (error) {
+          console.error("Error uploading image:", error);
+          setError("Failed to upload image. Please try again.");
+        }
       };
+  
+      // Read the file as a data URL
       reader.readAsDataURL(file);
     }
   };
+  
+
+  
 
   const handleTryOn = async () => {
     if (!avatarFile || !clothingFile) {
@@ -55,13 +74,16 @@ const TryonPopup = ({ image }) => {
       return;
     }
 
+    
+
     setLoading(true);
     setError(null);
-
+    
     try {
-      const avatarUrl = "https://raw.githubusercontent.com/john-eighteenth/clothes-tryon-js/main/resources/look.jpg" // avatarPreview;
-      const clothingUrl = clothingPreview;
-
+      const avatarUrl = selectedImage//"https://raw.githubusercontent.com/john-eighteenth/clothes-tryon-js/main/resources/look.jpg" // avatarPreview;
+      const clothingUrl = clothingFile// clothingPreview;
+      
+      console.log(avatarUrl, clothingUrl, 'working .....');
       const resultImageUrl = await virtualTryOn(avatarUrl, clothingUrl);
       setResultImage(resultImageUrl);
     } catch (error) {
@@ -69,7 +91,7 @@ const TryonPopup = ({ image }) => {
         "Error during try-on process:",
         error.response?.data || error.message
       );
-      setError("An error occurred while processing the images.");
+      setError(error.message);
     } finally {
       setLoading(false);
     }
