@@ -1,9 +1,9 @@
-'use client';
+"use client";
 import React, { useState } from "react";
 import axios from "axios";
 import { uploadImageToCloudinary } from "@/utils/uploadImage"; // Ensure this utility is correctly implemented
 
-const RAPID_API_KEY = "4361ac8516msh649f4c5ee2a5730p16477djsn7d46e673eb59"; // Replace with your actual key
+const RAPID_API_KEY = "df6de32d8fmshcc85bd79920fb3ep1700fajsnb9d2f405fa57"; // Replace with your actual key
 
 const TryOnComponent = () => {
   const [avatarFile, setAvatarFile] = useState(null);
@@ -120,7 +120,8 @@ const TryOnComponent = () => {
         <button
           onClick={handleTryOn}
           className="mt-2 p-2 bg-blue-500 text-white rounded"
-          disabled={loading}>
+          disabled={loading}
+        >
           {loading ? "Processing..." : "Upload and Try On"}
         </button>
 

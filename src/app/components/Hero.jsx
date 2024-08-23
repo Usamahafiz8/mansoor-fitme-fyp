@@ -27,7 +27,7 @@ const typeWriterEffect = (text, elementId, delay = 30) => {
 const Hero = () => {
   const [inputValue, setInputValue] = useState("");
   const [placeholder, setPlaceholder] = useState(
-    "This is your AI personalized styling coach..."
+    "This is your AI personalized styling coach ★★★"
   );
 
   const handleInputChange = (event) => {
@@ -49,9 +49,8 @@ const Hero = () => {
     TASK:
     1. Analyze the user's prompt and suggest the best styling of clothes according to their requirement.
     2. Provide short and concise advice, with a maximum of 5 lines.
-    3. Responses should start with "Hey, this is your personal styling coach." for the first response afterward continue as you want
-	4. You will judge the language of the user and answer the user in the same language
-
+    3. Responses should start with "Hey, this is your personal styling coach."
+    4. you are requested to judge the language of the user by his prompt and  talk and answer him back in the same language
     -------
     RESTRICTIONS:
     - You are not allowed to search the web for the user.
@@ -69,7 +68,7 @@ const Hero = () => {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: Bearer `${process.env.NEXT_PUBLIC_OPENAI_API_KEY}`, // Use the environment variable
+            Authorization: `Bearer ${process.env.NEXT_PUBLIC_OPENAI_API_KEY}`, // Use the environment variable
           },
           body: JSON.stringify({
             model: "gpt-3.5-turbo",

@@ -1,13 +1,13 @@
 "use client";
-import React, { useState } from 'react';
-import emailjs from 'emailjs-com';
+import React, { useState } from "react";
+import emailjs from "emailjs-com";
 
 const Support = () => {
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    subject: '',
-    message: ''
+    name: "",
+    email: "",
+    subject: "",
+    message: "",
   });
 
   const handleChange = (e) => {
@@ -20,31 +20,43 @@ const Support = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    emailjs.sendForm(
-      'service_tjw7epd',  // Replace with your EmailJS service ID
-      'template_74lgj6a', // Replace with your EmailJS template ID
-      e.target,
-      'xICyOCLQdk8_5Umho'      // Replace with your EmailJS user ID
-    ).then((result) => {
-      alert('Message sent successfully!');
-      setFormData({
-        name: '',
-        email: '',
-        subject: '',
-        message: ''
-      });
-    }, (error) => {
-      alert('Failed to send message, please try again later.');
-    });
+    emailjs
+      .sendForm(
+        "service_tjw7epd", // Replace with your EmailJS service ID
+        "template_74lgj6a", // Replace with your EmailJS template ID
+        e.target,
+        "xICyOCLQdk8_5Umho" // Replace with your EmailJS user ID
+      )
+      .then(
+        (result) => {
+          alert("Message sent successfully!");
+          setFormData({
+            name: "",
+            email: "",
+            subject: "",
+            message: "",
+          });
+        },
+        (error) => {
+          alert("Failed to send message, please try again later.");
+        }
+      );
   };
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100">
       <div className="w-full max-w-md p-8 bg-white shadow-md rounded-lg">
-        <h2 className="text-2xl font-semibold text-center text-gray-800 mb-6">Support Page</h2>
+        <h2 className="text-2xl font-semibold text-center text-gray-800 mb-6">
+          Support Page
+        </h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label htmlFor="name" className="block text-gray-700 font-medium mb-2">Name:</label>
+            <label
+              htmlFor="name"
+              className="block text-gray-700 font-medium mb-2"
+            >
+              Name:
+            </label>
             <input
               type="text"
               id="name"
@@ -56,7 +68,12 @@ const Support = () => {
             />
           </div>
           <div>
-            <label htmlFor="email" className="block text-gray-700 font-medium mb-2">Email:</label>
+            <label
+              htmlFor="email"
+              className="block text-gray-700 font-medium mb-2"
+            >
+              Email:
+            </label>
             <input
               type="email"
               id="email"
@@ -68,7 +85,12 @@ const Support = () => {
             />
           </div>
           <div>
-            <label htmlFor="subject" className="block text-gray-700 font-medium mb-2">Subject:</label>
+            <label
+              htmlFor="subject"
+              className="block text-gray-700 font-medium mb-2"
+            >
+              Subject:
+            </label>
             <input
               type="text"
               id="subject"
@@ -80,7 +102,12 @@ const Support = () => {
             />
           </div>
           <div>
-            <label htmlFor="message" className="block text-gray-700 font-medium mb-2">Message:</label>
+            <label
+              htmlFor="message"
+              className="block text-gray-700 font-medium mb-2"
+            >
+              Message:
+            </label>
             <textarea
               id="message"
               name="message"
